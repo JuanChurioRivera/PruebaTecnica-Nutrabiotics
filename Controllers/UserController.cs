@@ -42,13 +42,16 @@ namespace PruebaTenicaTodos.Controllers
         [ProducesResponseType(200)]
         public IActionResult GetUserById(int id) {
 
-            if (!_user.UserExist(id)) {
-
-                return NotFound();
-            }
 
             var user = _user.GetUserById(id);
 
+            if (user == null)
+            {
+                ModelState.AddModelError("", "User not found");
+                return StatusCode(404, ModelState);
+            }
+
+           
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
@@ -60,11 +63,13 @@ namespace PruebaTenicaTodos.Controllers
 
         [HttpGet("GetUsersByRole/{role}")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public IActionResult GetUsersByRole(string role) {
 
             var users = _user.GetUserByRole(role);
 
             if (users == null) {
+
                 return NotFound($"{role} wasnt found");
             }
 
@@ -73,7 +78,7 @@ namespace PruebaTenicaTodos.Controllers
                 return BadRequest(ModelState);
             }
             var mapped = _mapper.Map<List<UserDto>>(users);
-            return Ok(User);
+            return Ok(mapped);
 
         }
 
@@ -83,9 +88,13 @@ namespace PruebaTenicaTodos.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetTodosFromUser(int id)
         {
-            if (!_user.UserExist(id))
+
+            var user = _user.GetUserById(id);
+
+            if (user == null)
             {
-                return NotFound($"{id} doesn't exist");
+                ModelState.AddModelError("", "User not found");
+                return StatusCode(404, ModelState);
             }
 
             var todos = _user.GetTodosFromUser(id);
@@ -129,17 +138,16 @@ namespace PruebaTenicaTodos.Controllers
 
         public IActionResult DeleteUser(int id) {
 
-            if (!_user.UserExist(id)) {
+            var user = _user.GetUserById(id);
 
+            if (user == null)
+            {
                 ModelState.AddModelError("", "User not found");
                 return StatusCode(404, ModelState);
             }
 
-            var user = _user.GetUserById(id);
-
-            var mapped = _mapper.Map<User>(user);
-
-            if (!_user.DeleteUser(mapped.Id)) {
+           
+            if (! _user.DeleteUser(user)) {
 
                 ModelState.AddModelError("", "Something went wrong");
                 return StatusCode(500, ModelState);

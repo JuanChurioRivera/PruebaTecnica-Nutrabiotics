@@ -3,6 +3,8 @@ using AutoMapper;
 using PruebaTenicaTodos.Dto;
 using PruebaTenicaTodos.Models;
 using PruebaTenicaTodos.Interface;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
 
 
 namespace PruebaTenicaTodos.Controllers
@@ -34,8 +36,9 @@ namespace PruebaTenicaTodos.Controllers
                 return BadRequest(ModelState);
             }
 
+            var mapped = _mapper.Map<ICollection<TodoDto>>(todos);
 
-            return Ok(todos);
+            return Ok(mapped);
 
         }
 
@@ -58,7 +61,9 @@ namespace PruebaTenicaTodos.Controllers
 
             }
 
-            return Ok(todo);
+            var mapped = _mapper.Map<TodoDto>(todo);
+
+            return Ok(mapped);
 
         }
 
@@ -79,7 +84,9 @@ namespace PruebaTenicaTodos.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(user);
+            var mapped = _mapper.Map<UserDto>(user);
+
+            return Ok(mapped);
         }
 
         [HttpPost("CreateTodo")]
@@ -87,9 +94,10 @@ namespace PruebaTenicaTodos.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
 
-        public IActionResult CreateTodo([FromBody] Todo todo, [FromQuery] int UserId) {
+        public IActionResult CreateTodo([FromBody] TodoDto todo, [FromQuery] int UserId) {
 
-            var tmp_todo = todo;
+            var tmp_todo = _mapper.Map<Todo>(todo);
+
             var user = _user.GetUserById(UserId);
 
             if (user == null)
@@ -120,9 +128,10 @@ namespace PruebaTenicaTodos.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
 
-        public IActionResult UpdateTodo([FromBody] Todo todo, [FromQuery] int id) {
+        public IActionResult UpdateTodo([FromBody] TodoDto todo,[Required] [FromQuery] int id) {
 
             var old_todo = _todo.GetTodoById(id);
+
             if (old_todo == null) {
 
                 ModelState.AddModelError("", "Todo not found");

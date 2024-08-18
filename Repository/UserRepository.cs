@@ -40,16 +40,11 @@ namespace PruebaTenicaTodos.Repository
 
         }
 
-        public bool UserExist(int id) {
-        
-            return _context.Users.Any(u => u.Id == id);
-        
-        }
 
-        public bool DeleteUser(int id) {
+        public bool DeleteUser(User user) {
 
-            var User = GetUserById(id);
-            _context.Users.Remove(User);
+            
+            _context.Users.Remove(user);
             return Save();
 
         }
@@ -68,13 +63,6 @@ namespace PruebaTenicaTodos.Repository
         }
 
        
-
-        public bool DeleteUser(User user)
-        {
-            _context.Users.Remove(user);
-            return Save();
-        }
-
 
 
         public bool Save() { 
