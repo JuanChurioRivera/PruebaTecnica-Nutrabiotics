@@ -1,0 +1,6 @@
+La API  fue hecha usando el framework .NET Core 8,
+La base de datos que se uso fue MySQL Server, más especificamente Microsoft SQL Server Express (64-bit) de manera local.
+
+La base de datos solo maneja dos tablas; Users y Todos. Esto para cada una de las clases, la relación como se puede ver en el grafo UML es de: uno a muchos (Un User muchos Todos).
+
+La API fue realizando usando el patron de diseño Repository Pattern lo que supone una buena escalabilidad y mantenimiento, Las carpetas fueron; Interface, Repository, Controller.
